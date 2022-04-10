@@ -1,0 +1,164 @@
+\documentclass{article}
+% \documentclass{ctexart}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+% \usepackage{ctex}
+\usepackage{amsmath, amssymb, bm, mathtools, mathdots}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{textcomp}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\usepackage{cleveref}
+\usepackage{geometry}
+\setlength{\parindent}{0pt}
+\geometry{a4paper,scale=0.8}
+\linespread{1.5}
+\DeclareMathOperator*{\argmax}{argmax}
+\newcommand{\Answer}[1]{\textcolor{blue}{\vspace{5pt}\noindent\textbf{Answer}: {#1}}}
+% \newcommand{\Answer}[1]{\iffalse {#1}\fi}
+\newcommand{\pt}[1]{\textbf{({#1}pt)}}
+\newcounter{problemctr}
+\newcommand{\Problem}[1][20pt]{\stepcounter{problemctr}
+    \vspace{#1}\textbf{Problem~\arabic{problemctr}.}
+}
+\newcommand{\revision}[1]{{#1}}
+\newcommand{\rev}[1]{\textcolor{red}{#1}}
+
+
+% math
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\rv}[1]{\mathsf{#1}}
+\newcommand{\rw}{\rv{w}}
+\newcommand{\ru}{\rv{u}}
+\newcommand{\rx}{\rv{x}}
+\newcommand{\ry}{\rv{y}}
+\newcommand{\rz}{\rv{z}}
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+
+\title{Coding Project 4 Instructions}
+\author{Deep Learning 2022 Spring}
+\date{Due on 2022/5/11}
+
+\begin{document}
+
+\maketitle
+
+\noindent\textbf{
+In this coding assignment, you need to implement LSTM and Transformer-based models for text generation and reading comprehension tasks. Similar to Coding Project 2, this project requires a relatively long training time. Therefore, we provide Python scripts instead of Jupyter Notebooks, with which you can conveniently train your model on the server. Please clone the starter code from
+\url{https://github.com/deeplearning12023/cp4}.
+}
+
+\part{Text Generation}
+
+\section{Task}
+
+In this task, you need to train sequence-to-sequence models for the conditional generation and language models for the unconditional generation.
+
+\subsection{Writing Couplets with Sequence-to-Sequence Models}
+Sequence-to-sequence aims to train a model
+\begin{equation*}
+    \mathbb{P}_{\rv{Y}|\rv{X}}(Y|X)=\prod_{t=1}^L \mathbb{P}_{\rv{Y_t}|\rv{Y}_{<t},\rv{X}}
+    (Y_t|f_\textrm{dec}(Y_{<t}),f_\textrm{enc}(X))
+\end{equation*}
+on paired data $(X,Y)$, where $f_\textrm{enc}$ and $f_\textrm{dec}$ are the encoder and decoder model respectively. In this task, we provide a couplet corpus, and you need to:
+\begin{enumerate}
+    \item Complete the code of \texttt{Seq2SeqModel} in \texttt{generation/lstm.py} and enhance it with the attention mechanism.
+    \item
+    Complete the code for modules in \texttt{generate/transformer.py} and train a sequence-to-sequence model with transformer architecture.
+    \item
+    Complete the code in function \texttt{generate} of \texttt{Seq2SeqModel} with beam search for LSTM and Transformer respectively.
+\end{enumerate}
+
+\subsection{Writing Poems with Language Models}
+
+Language models learn the sequence distribution in an auto-regressive manner:
+\begin{equation*}
+    \mathbb{P}_\rv{X}(X;\theta)=\prod_{t=1}^L\mathbb{P}_{\rv{X_t}|\rv{X}_{<t}}
+    (X_t|X_{<t};\theta).
+\end{equation*}
+In this task, you are given a Chinese classical poetry corpus. You need to
+complete the code of \texttt{LMModel} in \texttt{generation/lstm.py} and \texttt{generate/transformer.py}. Construct the model and implement function \texttt{generate} with beam search.
+
+
+\section{Submission}
+You need to submit all codes, your trained models and your report.
+\begin{itemize}
+    \item 
+    In this task, we expect 4 models named ``lstm\_lm.pt'', ``lstm\_seq2seq.pt'', ``transformer\_lm.pt'' and
+    ``transformer\_seq2seq.pt''. \textbf{Place them appropriately} and make sure that \texttt{generation/evaluation.py} runs fine.
+    \item
+    In your report, we expect to see \textbf{training curves} and \textbf{generated samples} for LSTM and transformer-based model respectively.
+    \item
+    Show an ablation study of the attention mechanism on LSTM model in your report.
+\end{itemize}
+Note that you only need to submit one \texttt{pdf} file as the report for this coding project.
+
+\section{Grading}
+We will grade this task according to \textbf{the quality of your generated samples
+and the perplexity in the test set}.
+
+\section{Tips}
+\begin{enumerate}
+    \item 
+    Make sure you can run \texttt{generation/evaluation.py} \textbf{**in your submitted folder**}!
+    \item
+    You \textbf{can modify any code for training if necessary}, but make sure that we can use the original code for inference and evaluation. (We will overwrite all codes without ``TODO'' blocks before running the evaluation.)
+    % You can modify \texttt{generation/dataset.py} for training if necessary, but
+    % make sure we can use the original \texttt{dataset.py} for inference.
+    \item
+    You are encouraged to use pre-trained word embedding and pre-trained
+    models to improve the performance, but keep in mind that we will not
+    install extra packages when testing your model.
+\end{enumerate}
+
+
+\part{Reading Comprehension}
+
+\setcounter{section}{0}
+\section{Task}
+
+In this task, we provide a reading comprehension dataset. There are thousands of articles in the dataset, and each article has several questions. For each
+question, there are $2$ to $4$ choices, and only one of them is correct. You need to
+build and train a model to choose the correct answer.
+
+\section{Submission}
+You need to submit all codes, your trained model and your report.
+\begin{itemize}
+    \item 
+    We expect your model named ``cls\_best.pt''. \textbf{Place it appropriately} and make sure that our evaluation code runs fine.
+    \item
+    In your report, we expect to see your \textbf{the details of your model},
+    \textbf{all the hyper-parameters},
+    \textbf{all the tricks or training techniques you use}, and \textbf{the training curve}.
+\end{itemize}
+Note that you only need to submit one \texttt{pdf} file as the report for this coding project.
+% The only requirement is to make sure you can run classification
+% /evaluation.py.
+
+\section{Grading}
+We will grade your model according to the accuracy in the
+test set. You will get all points \textbf{if your test accuracy is greater than $0.6$}.
+
+\section{Tips}
+\begin{enumerate}
+    \item 
+    Make sure you can run \texttt{classification/evaluation.py} \textbf{**in your submitted folder**}!
+    \item
+    You \textbf{can modify any code you for training if necessary}, but make sure that we can use the original code for inference and evaluation. (We will overwrite all codes without ``TODO'' blocks before running the evaluation.)
+    \item
+    Try to avoid using a giant model which exceeds the file size limit (1024MB) of web learning.
+\end{enumerate}
+
+\section{Bonus}
+The best submission with the highest testing accuracy will \textbf{get $1$ bonus
+point} for the final course grade.
+
+
+\end{document}
