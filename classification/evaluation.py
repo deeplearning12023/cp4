@@ -6,6 +6,7 @@ import os
 import torch
 
 from dataset import CLSDataset
+from model import *
 
 
 @torch.no_grad()

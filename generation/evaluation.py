@@ -4,6 +4,8 @@ import numpy as np
 import torch
 
 from dataset import *
+from lstm import *
+from transformer import *
 
 
 @torch.no_grad()
